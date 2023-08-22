@@ -1,0 +1,38 @@
+MODEL:
+  MODEL_NAME: "/path/to/model"
+  BACKBONE: "ResNet50"
+  INPUT_NAME: "images"
+  OUTPUT_NAMES: [ "num_dets","num_class","scores" ]
+
+DATA:
+  VIDEO_NAME: "/path/to/video/file"
+  RTSP_SITE: "/url/to/rtsp/site"
+  INPUT_SHAPE: [1,8,3,320,320] # Batch/VideoLen/Channel/Height/Width
+
+PIPELINE:
+  STRIDE: 3 # for padding.
+  INTERP: 0
+  SAMPLE_INTERVAL: 7 # under which we will sample an image.
+  TRIGGER_LEN: 8 # trigger a detection
+  BATCH_SIZE: 1 # for noe only 1 is supported. for video input [B,N,C,H,W] e.g. [1,8,3,320,320]
+  THRESHOLD: 0.6
+  ENABLE_SCALE: True
+  KEEP_RATIO: True
+  TARGET_SIZE: [ 320,320 ] # e.g.480x640,  height x width
+  TRAIN_SIZE: [ 320,320 ] # e.g.480x640,  height x width
+  SHORT_SIZE: 340 # short size scale in paddle video.
+  PIPELINE_TYPE: [ "InitInfo","TopDownEvalAffine","Resize","LetterBoxResize","NormalizeImage","PadStride","Permute" ] # actual pipeline, this should be consistent to class name.
+  N_MEAN: [ 0.485, 0.456, 0.406 ] # mean value for each channel in normalization.
+  N_STD: [ 0.229, 0.224, 0.225 ] # standard deviation for each channel in normalization
+  TIMING: True
+
+POSTPROCESS:
+  POST_MODE: 0 # Current 4 types of mode are supported: DRAW_LETTER = 0, DRAW_BOX = 1, DRAW_BOX_LETTER = 2,MASK_OUT = 3
+  TEXT_COLOR: [255,0,0] # should be in RGB and value between [0-255]
+  BOX_COLOR: [255,0,0] # should be in RGB and value between [0-255]
+  TEXT_LINE_WIDTH: 2.0 # should be in float
+  BOX_LINE_WIDTH: 2.0 # should be in float
+  TEXT_FONT_SIZE: 5.0 # should be in float
+  TEXT_OFF_X: 50 # If negative, we place the x offset to middle of image.
+  TEXT_OFF_Y: 20
+  POSTPROCESS_NAME: "FightPpTSMDeployPost"

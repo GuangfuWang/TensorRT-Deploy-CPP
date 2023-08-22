@@ -1,0 +1,10 @@
+#pragma once
+
+#cmakedefine FIGHT_PREPROCESS_GPU
+
+#cmakedefine FIGHT_INPUT_NAME "@FIGHT_INPUT_NAME@"
+
+#cmakedefine FIGHT_OUTPUT_NAMES "@FIGHT_OUTPUT_NAMES@"
+
+#cmakedefine FIGHT_DEPLOY_MODEL "@FIGHT_DEPLOY_MODEL@"
+
