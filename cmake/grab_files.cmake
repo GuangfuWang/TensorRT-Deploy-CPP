@@ -5,6 +5,7 @@ set(FIGHT_SRC
         ${PROJECT_SOURCE_DIR}/src/preprocessor.cpp
         ${PROJECT_SOURCE_DIR}/src/preprocess_ops.cpp
         ${PROJECT_SOURCE_DIR}/src/trt_deployresult.cpp
+        ${PROJECT_SOURCE_DIR}/src/postprocessor.cpp
         )
 
 set(FIGHT_HEADER
@@ -17,6 +18,7 @@ set(FIGHT_HEADER
         ${PROJECT_SOURCE_DIR}/src/preprocess_util.hpp
         ${PROJECT_SOURCE_DIR}/src/preprocess_ops.h
         ${PROJECT_SOURCE_DIR}/src/trt_deployresult.h
+        ${PROJECT_SOURCE_DIR}/src/postprocessor.h
         )
 
 set(FIGHT_MAIN

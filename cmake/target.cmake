@@ -1,6 +1,4 @@
-add_library(${FIGHT_DEPLOY_LIB_NAME} ${FIGHT_SRC}
-        ../src/postprocessor.cpp
-        ../src/postprocessor.h)
+add_library(${FIGHT_DEPLOY_LIB_NAME} ${FIGHT_SRC})
 target_include_directories(${FIGHT_DEPLOY_LIB_NAME} PUBLIC ${CUDA_INCLUDE_DIR})
 target_link_libraries(${FIGHT_DEPLOY_LIB_NAME} PUBLIC ${FIGHT_LIBS})
 
