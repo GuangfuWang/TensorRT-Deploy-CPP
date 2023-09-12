@@ -4,7 +4,7 @@
 namespace gf
 {
 
-void FightPPTSMResults::Get(const std::string &idx_name, std::vector<float> &res)
+void TrtResults::Get(const std::string &idx_name, std::vector<float> &res)
 {
 	if (std::find(Config::OUTPUT_NAMES.begin(), Config::OUTPUT_NAMES.end(),
 				  idx_name) != Config::OUTPUT_NAMES.end()) {
@@ -12,7 +12,7 @@ void FightPPTSMResults::Get(const std::string &idx_name, std::vector<float> &res
 	}
 }
 
-void FightPPTSMResults::Set(const std::pair<std::string, std::vector<float>> &data)
+void TrtResults::Set(const std::pair<std::string, std::vector<float>> &data)
 {
 	if (std::find(Config::OUTPUT_NAMES.begin(), Config::OUTPUT_NAMES.end(),
 				  data.first) != Config::OUTPUT_NAMES.end()) {
@@ -20,7 +20,11 @@ void FightPPTSMResults::Set(const std::pair<std::string, std::vector<float>> &da
 	}
 }
 
-void FightPPTSMResults::Clear()
+TrtResults::~TrtResults()
+{
+	m_res.clear();
+}
+void TrtResults::Clear()
 {
 	m_res.clear();
 }

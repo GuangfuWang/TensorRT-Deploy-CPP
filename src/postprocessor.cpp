@@ -16,8 +16,16 @@ void FightPpTSMDeployPost::Run(const SharedRef<TrtResults> &res, const std::vect
 	out_img.resize(img.size());
 	std::vector<float> fight_res;
 	res->Get(Config::OUTPUT_NAMES[0], fight_res);
+	Util::softmax(fight_res);
+
+	printf("Get Results: \t");
+	for (auto &item : fight_res) {
+		printf("%.3f \t", item);
+	}
+	printf("\n");
+
 	std::stringstream text;
-	text << "Fight Detected with Confidence: " << 100 * fight_res[0] << "%";
+	text << "Fight Detected with Confidence: " << 100 * fight_res[Config::TARGET_CLASS] << "%";
 	for (int i = 0; i < img.size(); ++i) {
 		out_img[i] = img[i].clone();
 		///@note the putText method does not have GPU version since it quite slow running on GPU for per pixel ops.
@@ -32,6 +40,9 @@ void FightPpTSMDeployPost::Run(const SharedRef<TrtResults> &res, const std::vect
 
 void Postprocessor::Init()
 {
+	if (!m_ops) {
+		m_ops = createSharedRef<Factory<PostprocessorOps>>();
+	}
 	m_ops->registerType<FightPpTSMDeployPost>(Config::POSTPROCESS_NAME);
 }
 
@@ -44,4 +55,11 @@ void Postprocessor::Run(const SharedRef<TrtResults> &res, const std::vector<cv::
 	}
 	m_ops->create(Config::POSTPROCESS_NAME)->Run(res, img, out_img);
 }
+Postprocessor::~Postprocessor()
+{
+	if (m_ops) {
+		m_ops->destroy();
+	}
+}
+
 }

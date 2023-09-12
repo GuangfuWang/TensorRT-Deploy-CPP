@@ -1,30 +1,3 @@
-/*
-  Copyright (c) 2023, Guangfu WANG
-  All rights reserved.
-
-  Redistribution and use in source and binary forms, with or without
-  modification, are permitted provided that the following conditions are met:
-  * Redistributions of source code must retain the above copyright
-  notice, this list of conditions and the following disclaimer.
-  * Redistributions in binary form must reproduce the above copyright
-  notice, this list of conditions and the following disclaimer in the
-  documentation and/or other materials provided with the distribution.
-  * Neither the name of the <organization> nor the
-  names of its contributors may be used to endorse or promote products
-  derived from this software without specific prior written permission.
-
-  THIS SOFTWARE IS PROVIDED BY <copyright holder> ''AS IS'' AND ANY
-  EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-  DISCLAIMED. IN NO EVENT SHALL <copyright holder> BE LIABLE FOR ANY
-  DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-  ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-*/
-
 #pragma once
 
 #include <vector>
@@ -34,65 +7,108 @@
 #include "config.h"
 #include "preprocess_ops.h"
 
-
 namespace gf
 {
 
-extern const float NORM_CONST;
+extern const float NORM_CONST;///< normalization constant, should be 1.0/255.0.
 
+/**
+ * @brief utility struct for image data in-out to GPU.
+ */
 struct ImageBlob
 {
-	// image width and height, should be int
-	//todo: this should be the shape after the scale but before the padding.
-	std::vector<int>     im_shape_;
-	// Buffer for image data after preprocessing
-	std::vector<float>   im_data_;
-	// in net data shape(after pad)
-	std::vector<int>     in_net_shape_;
+	std::vector<int> im_shape_;///< image width and height, should be int
+	std::vector<int> in_net_shape_;///< in net data shape(after pad)
 	// Evaluation image width and height
 	// std::vector<float>  eval_im_size_f_;
-	// Scale factor for image size to origin image size
-	std::vector<float>   scale_factor_;
-	// in net image after preprocessing
-	std::vector<cv::Mat> in_net_im_;
+	std::vector<float> scale_factor_;///< Scale factor for image size to origin image size
+	std::vector<cv::Mat> in_net_im_;///< in net image after preprocessing
+	std::vector<cv::cuda::GpuMat> m_gpu_data;///< real gpu data.
 };
 
+/**
+ * @brief this is factory class for preprocessing
+ * @details this class contains all worker class for preprocessing purpose.
+ * @note this class should not used inside deploy class, only use it inside the Preprocessor class.
+ * @example:
+ * @code
+ * 	SharedRef<Factory<PreprocessOp>> m_ops;
+ * 	if (!m_ops) {
+ *		m_ops = createSharedRef<Factory<PreprocessOp>>();
+ *	}
+ *	m_ops->registerType<NormalizeImage>("NormalizeImage");
+ *	m_ops->registerType<Permute>("Permute");
+ *	m_ops->registerType<Resize>("Resize");
+ *	m_ops->registerType<PadStride>("PadStride");
+ *	m_ops->registerType<TopDownEvalAffine>("TopDownEvalAffine");
+ *
+ *	//prepare the gpu data.
+ *	for (const auto &i : Config::PIPELINE_TYPE) {
+ *		(m_ops->create(i))->Run(gpu, num);
+ *	}
+ * @endcode
+ */
 class PreprocessorFactory
 {
 public:
+	/**
+	 * @brief initialization of static staff.
+	 */
 	static void Init();
-
+	/**
+	 * @brief constructor.
+	 * @details init the m_ops/m_stream, and register all worker subclass.
+	 */
 	PreprocessorFactory();
-
+	/**
+	 * @brief destroy the factory map.
+	 */
 	virtual ~PreprocessorFactory();
-
+	/**
+	 * @brief actual working function.
+	 * @param input raw image data.
+	 * @param output preprocessing results.
+	 */
 	void Run(const std::vector<cv::Mat> &input, SharedRef<ImageBlob> &output);
 
-	void CvtForGpuMat(const std::vector<cv::Mat> &input, cv::cuda::GpuMat *frames, int &num);
-
-	void CvtFromGpuMat(const cv::cuda::GpuMat *imgs, SharedRef<ImageBlob> &blob,
-					   const std::array<float, 2> &scale, const int &num);
+private:
+	/**
+ 	* @brief convert cpu mat to GPU mat pointer
+ 	* @param input input raw data.
+ 	* @param frames pointer to GpuMat.
+ 	* @param num number of GpuMats.
+ 	*/
+	void CvtForGpuMat(const std::vector<cv::Mat> &input, std::vector<cv::cuda::GpuMat>& frames, int &num);
 
 public:
 	//these two matrix is used for normalizing the frame image channel wise.
-	static thread_local cv::cuda::GpuMat MUL_MATRIX;
-	static thread_local cv::cuda::GpuMat SUBTRACT_MATRIX;
+	static thread_local cv::cuda::GpuMat MUL_MATRIX;///< used for normalization.
+	static thread_local cv::cuda::GpuMat SUBTRACT_MATRIX;///< used for channel wise normalization.
 	///@note this CONFIG must be set before actually inferring.
-	static thread_local bool             INIT_FLAG;
-	static thread_local float            SCALE_W;
-	static thread_local float            SCALE_H;
+	static thread_local bool INIT_FLAG;///< indicate initialization status.
+	static thread_local float SCALE_W;///< indicate scale of width.
+	static thread_local float SCALE_H;///< indicate scale of height.
 private:
-	SharedRef<Factory<PreprocessOp>> m_ops    = nullptr;
-	SharedRef<cv::cuda::Stream>      m_stream = nullptr;
+	SharedRef<Factory<PreprocessOp>> m_ops = nullptr;///< worker smart pointer.
+	SharedRef<cv::cuda::Stream> m_stream = nullptr;///< parallel support.
 };
 
-///@note this is GPU version of preprocessing pipeline.
+/**
+ * @brief this is interface class for deploy class.
+ * @details to conveniently use preprocessing functionality, only invoke Run() method is required.
+ * @note this is GPU version of preprocessing pipeline.
+ */
 class Preprocessor
 {
 public:
+	/**
+	 * @brief invoking interface function for preprocessing by deploy class.
+	 * @param input raw image data.
+	 * @param output output preprocessed data.
+	 */
 	void Run(const std::vector<cv::Mat> &input, SharedRef<ImageBlob> &output);
 
 private:
-	SharedRef<PreprocessorFactory> m_preprocess_factory = nullptr;
+	SharedRef<PreprocessorFactory> m_preprocess_factory = nullptr;///< worker factory.
 };
 }

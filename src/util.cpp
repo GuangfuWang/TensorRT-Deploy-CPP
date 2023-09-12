@@ -1,9 +1,12 @@
 #include "util.h"
 #include <sys/stat.h>
 #include <iostream>
+#include <valarray>
 
 namespace gf
 {
+
+thread_local std::chrono::high_resolution_clock::time_point Util::mTic;
 
 bool Util::checkDirExist(const std::string &dir)
 {
@@ -44,5 +47,17 @@ long Util::getFileSize(const std::string &file)
 int Util::cvtStr2Int(const char *arr)
 {
 	return std::atoi(arr);
+}
+void Util::softmax(std::vector<float> &in)
+{
+	float total = 0.0f;
+	for (auto &e : in) {
+		auto curr = std::exp(e);
+		e = curr;
+		total += curr;
+	}
+	for (auto &e : in) {
+		e /= total;
+	}
 }
 }
