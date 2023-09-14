@@ -70,6 +70,8 @@ namespace gf {
 
     thread_local std::string Config::POSTPROCESS_NAME = "FightPpTSMDeployPost";
 
+	thread_local std::string Config::POST_TEXT="Fight";
+
     void Config::LoadConfigFile(int argc, char **argv, const std::string &file) {
         Config::MODEL_NAME = FIGHT_DEPLOY_MODEL;
         Config::INPUT_NAME = FIGHT_INPUT_NAME;
@@ -216,6 +218,9 @@ namespace gf {
             if (model_node["POSTPROCESS_NAME"].IsDefined()) {
                 Config::POSTPROCESS_NAME = model_node["POSTPROCESS_NAME"].as<std::string>();
             }
+			if (model_node["POST_TEXT"].IsDefined()) {
+				Config::POST_TEXT = model_node["POST_TEXT"].as<std::string>();
+			}
         } else {
             std::cerr << "Please set MODEL, " << std::endl;
         }

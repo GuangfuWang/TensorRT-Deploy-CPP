@@ -51,6 +51,8 @@ class FightPpTSMDeployPost final: public PostprocessorOps
 public:
 	void Run(const SharedRef<TrtResults> &res, const std::vector<cv::Mat> &img,
 			 std::vector<cv::Mat> &out_img) override;
+private:
+    std::vector<float> m_moving_average;///< moving average.
 };
 
 /**
@@ -81,6 +83,7 @@ public:
 
 private:
 	SharedRef<Factory<PostprocessorOps>> m_ops = nullptr;///< auto deconstructed, lazy purpose.
+	PostprocessorOps* m_worker = nullptr;///< real worker.
 	static thread_local bool INIT_FLAG; ///< initialization flag.
 };
 }

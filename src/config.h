@@ -54,5 +54,6 @@ public:
 	static thread_local int TEXT_OFF_X;///< text drawing position offset x.
 	static thread_local int TEXT_OFF_Y;///< text drawing position offset y.
 	static thread_local std::string POSTPROCESS_NAME;///< post processor name, should be same as used. (subclass of PostprocessorOps)
+	static thread_local std::string POST_TEXT;///< post processing text.
 };
 }
