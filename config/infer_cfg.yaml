@@ -12,7 +12,7 @@ DATA:
 PIPELINE:
   STRIDE: 2 # for padding.
   INTERP: 0
-  SAMPLE_INTERVAL: 7 # under which we will sample an image.
+  SAMPLE_INTERVAL: 3 # under which we will sample an image.
   TRIGGER_LEN: 8 # trigger a detection
   BATCH_SIZE: 1 # for now only 1 is supported. for video input [B,N,C,H,W] e.g. [1,8,3,320,320]
   THRESHOLD: 0.8
