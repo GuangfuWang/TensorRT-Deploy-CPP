@@ -12,4 +12,4 @@ include_directories(${OpenCV_INCLUDE_DIRS})
 find_package(YAML-CPP REQUIRED)
 
 
-set(FIGHT_LIBS ${OpenCV_LIBS} libyaml-cpp.a cudart nvinfer nvinfer_plugin)
+set(FIGHT_LIBS ${OpenCV_LIBS} libyaml-cpp.so cudart nvinfer nvinfer_plugin)
