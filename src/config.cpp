@@ -4,7 +4,7 @@
 
 namespace gf {
 
-    thread_local std::string              Config::MODEL_NAME;
+    thread_local std::string              Config::MODEL_NAME = "../models/ppTSM_fight.engine";
 
     thread_local std::string              Config::BACKBONE = "ResNet50";
 
@@ -14,23 +14,23 @@ namespace gf {
 
     thread_local std::vector<int>         Config::INPUT_SHAPE = {1, 8, 3, 320, 320};
 
-    thread_local std::string              Config::INPUT_NAME;
+    thread_local std::string              Config::INPUT_NAME = "image";
 
-    thread_local std::vector<std::string> Config::OUTPUT_NAMES = {};
+    thread_local std::vector<std::string> Config::OUTPUT_NAMES = {"scores"};
 
-    thread_local unsigned int Config::STRIDE = 3;
+    thread_local unsigned int Config::STRIDE = 2;
 
     thread_local unsigned int Config::INTERP = 0;
 
-    thread_local unsigned int Config::SAMPLE_INTERVAL = 7;
+    thread_local unsigned int Config::SAMPLE_INTERVAL = 3;
 
     thread_local unsigned int Config::TRIGGER_LEN = 8;
 
     thread_local unsigned int Config::BATCH_SIZE = 1;
 
-    thread_local float Config::THRESHOLD = 0.5f;
+    thread_local float Config::THRESHOLD = 0.8f;
 
-    thread_local unsigned int Config::TARGET_CLASS = 0;
+    thread_local unsigned int Config::TARGET_CLASS = 1;
 
     thread_local std::vector<int> Config::TARGET_SIZE = {320, 320};
 
@@ -38,9 +38,7 @@ namespace gf {
 
     thread_local unsigned int Config::SHORT_SIZE = 340;
 
-    thread_local std::vector<std::string> Config::PIPELINE_TYPE = {"InitInfo", "TopDownEvalAffine", "Resize",
-                                                                   "LetterBoxResize", "NormalizeImage",
-                                                                   "PadStride", "Permute"};
+    thread_local std::vector<std::string> Config::PIPELINE_TYPE = {"TopDownEvalAffine","Resize","LetterBoxResize","NormalizeImage","PadStride","Permute"};
 
     thread_local std::vector<float>       Config::N_MEAN = {0.485f, 0.456f, 0.406f};
 
@@ -58,19 +56,19 @@ namespace gf {
 
     thread_local std::vector<unsigned char> Config::BOX_COLOR = {255, 0, 0};
 
-    thread_local float Config::TEXT_LINE_WIDTH = 5.0;
+    thread_local float Config::TEXT_LINE_WIDTH = 2.0f;
 
     thread_local float Config::BOX_LINE_WIDTH = 2.0;
 
-    thread_local float Config::TEXT_FONT_SIZE = 2.0;
+    thread_local float Config::TEXT_FONT_SIZE = 1.8f;
 
-    thread_local int   Config::TEXT_OFF_X = 50;
+    thread_local int   Config::TEXT_OFF_X = 450;
 
-    thread_local int   Config::TEXT_OFF_Y = 20;
+    thread_local int   Config::TEXT_OFF_Y = 50;
 
     thread_local std::string Config::POSTPROCESS_NAME = "FightPpTSMDeployPost";
 
-	thread_local std::string Config::POST_TEXT="Fight";
+    thread_local std::string Config::POST_TEXT = "Fight";
 
     void Config::LoadConfigFile(int argc, char **argv, const std::string &file) {
         Config::MODEL_NAME = FIGHT_DEPLOY_MODEL;
@@ -191,11 +189,11 @@ namespace gf {
             }
             if (model_node["TEXT_COLOR"].IsDefined()) {
                 Config::TEXT_COLOR = model_node["TEXT_COLOR"].as<std::vector<unsigned char>>();
-                std::swap(Config::TEXT_COLOR[0],Config::TEXT_COLOR[2]);
+                std::swap(Config::TEXT_COLOR[0], Config::TEXT_COLOR[2]);
             }
             if (model_node["BOX_COLOR"].IsDefined()) {
                 Config::BOX_COLOR = model_node["BOX_COLOR"].as<std::vector<unsigned char>>();
-                std::swap(Config::BOX_COLOR[0],Config::BOX_COLOR[2]);
+                std::swap(Config::BOX_COLOR[0], Config::BOX_COLOR[2]);
             }
             if (model_node["TEXT_LINE_WIDTH"].IsDefined()) {
                 Config::TEXT_LINE_WIDTH = model_node["TEXT_LINE_WIDTH"].as<float>();
@@ -218,9 +216,9 @@ namespace gf {
             if (model_node["POSTPROCESS_NAME"].IsDefined()) {
                 Config::POSTPROCESS_NAME = model_node["POSTPROCESS_NAME"].as<std::string>();
             }
-			if (model_node["POST_TEXT"].IsDefined()) {
-				Config::POST_TEXT = model_node["POST_TEXT"].as<std::string>();
-			}
+            if (model_node["POST_TEXT"].IsDefined()) {
+                Config::POST_TEXT = model_node["POST_TEXT"].as<std::string>();
+            }
         } else {
             std::cerr << "Please set MODEL, " << std::endl;
         }

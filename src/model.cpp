@@ -41,7 +41,16 @@ static void Plot(cv::Mat &in){
 }
 
 cvModel *Allocate_Algorithm(cv::Mat &input_frame, int algID, int gpuID) {
-    Config::LoadConfigFile(0, nullptr, "../config/infer_cfg.yaml");
+    std::string file;
+    if(Util::checkFileExist("./infer_cfg.yaml"))
+        file = "./infer_cfg.yaml";
+    else if(Util::checkFileExist("../config/infer_cfg.yaml")){
+        file = "../config/infer_cfg.yaml";
+    }else{
+        std::cout<<"Cannot find YAML file!"<<std::endl;
+        exit(EXIT_FAILURE);
+    }
+    Config::LoadConfigFile(0, nullptr, file);
     auto *ptr = new cvModel();
     ptr->FrameNum = 0;
     ptr->Frameinterval = 0;
