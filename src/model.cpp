@@ -44,8 +44,8 @@ cvModel *Allocate_Algorithm(cv::Mat &input_frame, int algID, int gpuID) {
     std::string file;
     if(Util::checkFileExist("./infer_cfg.yaml"))
         file = "./infer_cfg.yaml";
-    else if(Util::checkFileExist("model/fight/infer_cfg.yaml")){
-        file = "model/fight/infer_cfg.yaml";
+    else if(Util::checkFileExist("weight/fight/infer_cfg.yaml")){
+        file = "weight/fight/infer_cfg.yaml";
     }else{
         std::cout<<"Cannot find YAML file!"<<std::endl;
         exit(EXIT_FAILURE);
