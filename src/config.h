@@ -13,7 +13,7 @@ class Config final
 {
 public:
 	/**
-	 * @brief loading the config yaml file, default folder is ./config/infer_cfg.yaml
+	 * @brief loading the config yaml file, default folder is ./model/fight/infer_cfg.yaml
 	 * @param argc terminal arg number.
 	 * @param argv terminal arg values.
 	 * @param file config file full path.
