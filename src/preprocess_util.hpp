@@ -2,7 +2,7 @@
 
 #include <opencv2/cudaimgproc.hpp>
 #include <cuda_runtime_api.h>
-#include <opencv4/opencv2/cudawarping.hpp>
+#include <opencv2/cudawarping.hpp>
 #include <opencv2/cudaarithm.hpp>
 #include <iostream>
 
