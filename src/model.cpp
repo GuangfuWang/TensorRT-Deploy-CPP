@@ -3,7 +3,7 @@
 #include "trt_deploy.h"
 #include "trt_deployresult.h"
 
-using namespace gf;
+namespace gf {
 
 float CURRENT_RES = 0.0f;
 unsigned int COUNT_TOTAL = 0;
@@ -44,8 +44,8 @@ cvModel *Allocate_Algorithm(cv::Mat &input_frame, int algID, int gpuID) {
     std::string file;
     if(Util::checkFileExist("./infer_cfg.yaml"))
         file = "./infer_cfg.yaml";
-    else if(Util::checkFileExist("../config/infer_cfg.yaml")){
-        file = "../config/infer_cfg.yaml";
+    else if(Util::checkFileExist("weight/fight/infer_cfg.yaml")){
+        file = "weight/fight/infer_cfg.yaml";
     }else{
         std::cout<<"Cannot find YAML file!"<<std::endl;
         exit(EXIT_FAILURE);
@@ -75,6 +75,7 @@ void UpdateParams_Algorithm(cvModel *pModel) {
 }
 
 void Process_Algorithm(cvModel *pModel, cv::Mat &input_frame) {
+    pModel->alarm = 0;
     if (COUNT_LOOP < COUNT) {
         auto model = reinterpret_cast<InferModel *>(pModel->iModel);
         if((COUNT_TOTAL%Config::SAMPLE_INTERVAL)==0){
@@ -93,6 +94,7 @@ void Process_Algorithm(cvModel *pModel, cv::Mat &input_frame) {
         model->mSampled.clear();
         model->mSampled.push_back(input_frame.clone());
         COUNT_LOOP = 1;
+        pModel->alarm = CURRENT_RES>=Config::THRESHOLD;
     }
     COUNT_TOTAL++;
 }
@@ -108,3 +110,5 @@ void Destroy_Algorithm(cvModel *pModel) {
         pModel = nullptr;
     }
 }
+
+} // namespace gf

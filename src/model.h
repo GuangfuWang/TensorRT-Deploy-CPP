@@ -3,6 +3,8 @@
 
 #define POLY_POINT_MAX_NUMBER 16
 
+namespace gf {
+
 typedef enum
 {
     IA_TYPE_INTRUSION_DETECTION, //周边保护，入侵报警
@@ -70,3 +72,5 @@ extern void SetPara_Algorithm(cvModel *pModel,int algID);
 extern void UpdateParams_Algorithm(cvModel *pModel);
 extern void Process_Algorithm(cvModel *pModel, cv::Mat &input_frame);
 extern void Destroy_Algorithm(cvModel *pModel);
+
+} // namespace gf

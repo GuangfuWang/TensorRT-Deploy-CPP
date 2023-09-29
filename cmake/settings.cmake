@@ -13,7 +13,7 @@ option(FIGHT_TEST "Build fight test program." ON)
 option(FIGHT_PREPROCESS_GPU "Use GPU version of preprocessing pipeline" ON)
 set(FIGHT_INPUT_NAME "image" CACHE STRING "Input layer name for tensorrt deploy.")
 set(FIGHT_OUTPUT_NAMES "scores" CACHE STRING "Output layer names for tensorrt deploy, seperated with comma or colon")
-set(FIGHT_DEPLOY_MODEL "../models/fight_pptsm.engine" CACHE STRING "Used deploy AI model file (/path/to/*.engine)")
+set(FIGHT_DEPLOY_MODEL "weight/fight/fight_pptsm.engine" CACHE STRING "Used deploy AI model file (/path/to/*.engine)")
 
 # generate config.h in src folder.
 configure_file(
@@ -26,4 +26,6 @@ set(FIGHT_DEPLOY_LIB_NAME "fight_deploy_lib")
 set(FIGHT_DEPLOY_MAIN_NAME "fight_pptsm_tensorrt")
 set(FIGHT_DEPLOY_TEST_MAIN_NAME "fight_pptsm_trt_test")
 
-
+set(CMAKE_INSTALL_RPATH "\$ORIGIN")
+set(CMAKE_INSTALL_PREFIX "install")
+add_link_options("-Wl,--as-needed")
