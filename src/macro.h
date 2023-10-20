@@ -6,5 +6,5 @@
 
 #define FIGHT_OUTPUT_NAMES "scores"
 
-#define FIGHT_DEPLOY_MODEL "../models/fight_pptsm.engine"
+#define FIGHT_DEPLOY_MODEL "weight/fight/fight_pptsm.engine"
 

@@ -70,7 +70,11 @@ namespace gf {
 
     thread_local std::string Config::POST_TEXT = "Fight";
 
+	bool Config::init = false;
+
     void Config::LoadConfigFile(int argc, char **argv, const std::string &file) {
+		if(init)return;
+		init = true;
         Config::MODEL_NAME = FIGHT_DEPLOY_MODEL;
         Config::INPUT_NAME = FIGHT_INPUT_NAME;
         Config::OUTPUT_NAMES.clear();
@@ -88,7 +92,6 @@ namespace gf {
 
         if (!Util::checkFileExist(file)) {
             std::cerr << "Config file non exists! Aborting..." << std::endl;
-            exit(EXIT_FAILURE);
         }
 
         YAML::Node config;
@@ -222,7 +225,7 @@ namespace gf {
         } else {
             std::cerr << "Please set MODEL, " << std::endl;
         }
-
+		if(argc<2)return;
         cmdline::parser parser;
         parser.add<std::string>("input_name", 'i', "Input layer name for trt.", false);
         parser.add<std::string>("output_names", 'o', "Output layer names for trt.", false);
@@ -261,7 +264,6 @@ namespace gf {
             std::cout << Config::MODEL_NAME << std::endl;
             std::cerr << "Model does not exists!" << std::endl;
             std::cerr << "Please check the model path..." << std::endl;
-            exit(EXIT_FAILURE);
         }
 
         if (!VideoFile.empty()) {

@@ -42,13 +42,12 @@ static void Plot(cv::Mat &in){
 
 cvModel *Allocate_Algorithm(cv::Mat &input_frame, int algID, int gpuID) {
     std::string file;
-    if(Util::checkFileExist("./infer_cfg.yaml"))
-        file = "./infer_cfg.yaml";
-    else if(Util::checkFileExist("weight/fight/infer_cfg.yaml")){
-        file = "weight/fight/infer_cfg.yaml";
+    if(Util::checkFileExist("./fight_detection.yaml"))
+        file = "./fight_detection.yaml";
+    else if(Util::checkFileExist("weight/fight/fight_detection.yaml")){
+        file = "weight/fight/fight_detection.yaml";
     }else{
         std::cout<<"Cannot find YAML file!"<<std::endl;
-        exit(EXIT_FAILURE);
     }
     Config::LoadConfigFile(0, nullptr, file);
     auto *ptr = new cvModel();
@@ -57,8 +56,8 @@ cvModel *Allocate_Algorithm(cv::Mat &input_frame, int algID, int gpuID) {
     ptr->countNum = 0;
     ptr->width = input_frame.cols;
     ptr->height = input_frame.rows;
-    Config::INPUT_SHAPE[4] = ptr->width;
-    Config::INPUT_SHAPE[3] = ptr->height;
+//    Config::INPUT_SHAPE[4] = ptr->width;
+//    Config::INPUT_SHAPE[3] = ptr->height;
     ptr->scaleX = (Config::TARGET_SIZE[1]) / (ptr->width);
     ptr->scaleY = (Config::TARGET_SIZE[0]) / (ptr->height);
     ptr->iModel = GenModel();

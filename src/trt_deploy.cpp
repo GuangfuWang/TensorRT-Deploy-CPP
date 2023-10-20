@@ -186,7 +186,6 @@ namespace gf {
                                          cudaMemcpyDeviceToHost, m_stream);
             if (state) {
                 std::cout << "Transmit to host failed." << std::endl;
-                std::abort();
             }
         }
         //warp the state to our res.

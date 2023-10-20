@@ -12,7 +12,7 @@ using namespace gf;
  */
 
 int main(int argc, char **argv) {
-    Config::LoadConfigFile(argc, argv, "../config/infer_cfg.yaml");
+    Config::LoadConfigFile(argc, argv, "../config/fight_detection.yaml");
     SharedRef<TrtDeploy> mDeploy = createSharedRef<TrtDeploy>();
     SharedRef<TrtResults> mResult = createSharedRef<TrtResults>();
     mDeploy->Warmup(mResult);
@@ -27,27 +27,6 @@ int main(int argc, char **argv) {
             cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
     size_t total = cap.get(cv::CAP_PROP_FRAME_COUNT), current = 0;
     std::vector<std::vector<cv::Mat>> imgs;
-//    imgs.resize(total / Config::TRIGGER_LEN);
-//    for (int i = 0; i < imgs.size(); ++i) {
-//        imgs[i].resize(Config::TRIGGER_LEN);
-//    }
-//    std::vector<cv::Mat> out_data;
-//    cv::Mat img;
-//    int jdx = 0;
-//    while (cap.read(img)) {
-//        imgs[jdx / Config::TRIGGER_LEN][jdx % Config::TRIGGER_LEN] = img.clone();
-//        jdx++;
-//        if (jdx / Config::TRIGGER_LEN == imgs.size())break;
-//    }
-//
-//    for (auto &each: imgs) {
-//        mDeploy->Infer(each, mResult);
-//        mDeploy->Postprocessing(mResult, each, out_data);
-//        for (auto &f: out_data) {
-//            vw.write(f);
-//        }
-//        out_data.clear();
-//    }
     cv::Mat img;
     int c = 0;
     std::vector<std::vector<cv::Mat>> unsampled;
@@ -80,6 +59,8 @@ int main(int argc, char **argv) {
             vw.write(single);
         }
     }
+	vw.release();
+	cap.release();
     unsampled.clear();
 
     return 0;

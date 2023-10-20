@@ -125,7 +125,6 @@ void Preprocessor::Run(const std::vector<cv::Mat> &input, SharedRef<ImageBlob> &
 		std::cerr << "Please install CUDA version OpenCV! "
 					 "See: https://towardsdev.com/installing-opencv-4-with-cuda-in-ubuntu-20-04-fde6d6a0a367"
 				  << std::endl;
-		exit(EXIT_FAILURE);
 	}
 	if (!m_preprocess_factory) {
 		m_preprocess_factory = createSharedRef<PreprocessorFactory>();

@@ -13,7 +13,7 @@ class Config final
 {
 public:
 	/**
-	 * @brief loading the config yaml file, default folder is ./weight/fight/infer_cfg.yaml
+	 * @brief loading the config yaml file, default folder is ./weight/fight/fight_detection.yaml
 	 * @param argc terminal arg number.
 	 * @param argv terminal arg values.
 	 * @param file config file full path.
@@ -55,5 +55,6 @@ public:
 	static thread_local int TEXT_OFF_Y;///< text drawing position offset y.
 	static thread_local std::string POSTPROCESS_NAME;///< post processor name, should be same as used. (subclass of PostprocessorOps)
 	static thread_local std::string POST_TEXT;///< post processing text.
+	static bool init;
 };
 }
