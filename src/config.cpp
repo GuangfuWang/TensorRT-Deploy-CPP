@@ -144,6 +144,9 @@ namespace fight {
             if (model_node["POST_TEXT"].IsDefined()) {
                 POST_TEXT = model_node["POST_TEXT"].as<std::string>();
             }
+			if (model_node["POST_TEXT_FONT_FILE"].IsDefined()) {
+				POST_TEXT_FONT_FILE = model_node["POST_TEXT_FONT_FILE"].as<std::string>();
+			}
         } else {
             std::cerr << "Please set MODEL, " << std::endl;
         }

@@ -24,24 +24,6 @@ namespace fight {
 			m_moving_average.erase(it);
         }
 		if(sum>=m_config->THRESHOLD)alarm = 1;
-        std::stringstream text;
-        text << m_config->POST_TEXT << ": " << 100 * sum << "%";
-        for (int i = 0; i < img.size(); ++i) {
-            ///@note the putText method does not have GPU version since it quite slow running on GPU for per pixel ops.
-            if (sum>=m_config->THRESHOLD){
-				if(flag!=PostProcessFlag::NON){
-					for (int j = 0; j < m_config->SAMPLE_INTERVAL; ++j) {
-						cv::putText(out_img[i*m_config->SAMPLE_INTERVAL+j], text.str(),
-									cv::Point(m_config->TEXT_OFF_X, m_config->TEXT_OFF_Y),
-									cv::FONT_HERSHEY_PLAIN, m_config->TEXT_FONT_SIZE,
-									cv::Scalar(m_config->TEXT_COLOR[0], m_config->TEXT_COLOR[1], m_config->TEXT_COLOR[2]),
-									(int) m_config->TEXT_LINE_WIDTH);
-					}
-				}
-            }
-
-        }
-
     }
 
     void Postprocessor::Run(const SharedRef<TrtResults> &res, const std::vector<cv::Mat> &img,

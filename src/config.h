@@ -50,13 +50,14 @@ public:
 	int POST_MODE = 0;
 	std::vector<unsigned char> TEXT_COLOR = {255, 0, 0};
 	std::vector<unsigned char> BOX_COLOR = {255, 0, 0};
-	float TEXT_LINE_WIDTH = 2.0f;
+	float TEXT_LINE_WIDTH = 30.0f;
 	float BOX_LINE_WIDTH = 2.0;
 	float TEXT_FONT_SIZE = 1.8f;
 	int   TEXT_OFF_X = 450;
 	int   TEXT_OFF_Y = 50;
 	std::string POSTPROCESS_NAME = "FightPpTSMDeployPost";
 	std::string POST_TEXT = "Fight";
+	std::string POST_TEXT_FONT_FILE = "";
 	bool init = false;
 };
 }

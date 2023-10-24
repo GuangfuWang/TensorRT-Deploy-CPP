@@ -14,7 +14,7 @@ using namespace fight;
 
 int main(int argc, char **argv) {
     //prepare the input data.
-    auto in_path = std::filesystem::path("/home/wgf/Downloads/datasets/fight/tang.mp4");
+    auto in_path = std::filesystem::path("/home/wgf/Downloads/datasets/fight/fight-mine/09-41-27.mp4");
     cv::VideoCapture cap(in_path);
     cv::VideoWriter vw;
     std::filesystem::path output_path = in_path.parent_path() / (in_path.stem().string() + ".result.mp4");

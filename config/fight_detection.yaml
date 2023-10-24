@@ -33,8 +33,9 @@ POSTPROCESS:
   BOX_COLOR: [255,0,0] # should be in BGR and value between [0-255]
   TEXT_LINE_WIDTH: 2.0 # should be in float
   BOX_LINE_WIDTH: 1.0 # should be in float
-  TEXT_FONT_SIZE: 1.8 # should be in float
-  TEXT_OFF_X: 450 # If negative, we place the x offset to middle of image.
-  TEXT_OFF_Y: 50
+  TEXT_FONT_SIZE: 25 # should be in float
+  TEXT_OFF_X: 500 # If negative, we place the x offset to middle of image.
+  TEXT_OFF_Y: 30
   POSTPROCESS_NAME: "FightPpTSMDeployPost"
-  POST_TEXT: "Fight" #output string literal.
+  POST_TEXT: "打架" #output string literal.
+  POST_TEXT_FONT_FILE: "/home/wgf/dev/helmet_detection/SIMSUN.ttf"
