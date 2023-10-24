@@ -6,7 +6,7 @@
 #include <opencv2/cudaarithm.hpp>
 #include <iostream>
 
-namespace gf
+namespace fight
 {
 
 /**

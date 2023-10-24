@@ -3,14 +3,16 @@
 #include <yaml-cpp/yaml.h>
 #include <opencv2/opencv.hpp>
 #include "util.h"
+#include "config.h"
 
-namespace gf {
+namespace fight {
     /**
      * @brief Abstraction of preprocessing operation class, copied.
      * @details this class should be used inside the PreprocessorFactory class.
      */
     class PreprocessOp {
     public:
+		explicit PreprocessOp(SharedRef<Config>& config){m_config = config;}
 		/**
 		 * @brief de-constructor.
 		 */
@@ -24,6 +26,7 @@ namespace gf {
 
     protected:
         SharedRef<cv::cuda::Stream> m_stream = createSharedRef<cv::cuda::Stream>();///< for parallel purpose.
+        SharedRef<Config> m_config = nullptr;
     };
 
 	/**
@@ -32,12 +35,17 @@ namespace gf {
 	 */
     class NormalizeImage final : public PreprocessOp {
     public:
+		explicit NormalizeImage(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief implementation function.
 		 * @param data image data, from a vector->data().
 		 * @param num number of images.
 		 */
         void Run(std::vector<cv::cuda::GpuMat> &data) override;
+	private:
+		bool init = false;
+		cv::cuda::GpuMat m_mul;
+		cv::cuda::GpuMat m_sub;
     };
 	/**
 	 * @brief do nothing, yeah yeah i know it is silly, this class is kept only to make somebody happy, --!>
@@ -45,6 +53,7 @@ namespace gf {
 	 */
     class Permute final : public PreprocessOp {
     public:
+		explicit Permute(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief do nothing function, see
 		 * @param data input image.
@@ -57,6 +66,7 @@ namespace gf {
 	 */
     class Resize final : public PreprocessOp {
     public:
+		explicit Resize(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief resize image according to CONFIG.
 		 * @param data raw images
@@ -65,7 +75,7 @@ namespace gf {
         void Run(std::vector<cv::cuda::GpuMat> &data) override;
 
     private:
-        static std::pair<float, float> GenerateScale(const cv::cuda::GpuMat &im);///<Compute best resize scale for x-dimension, y-dimension
+        std::pair<float, float> GenerateScale(const cv::cuda::GpuMat &im);///<Compute best resize scale for x-dimension, y-dimension
     };
 
 	/**
@@ -73,6 +83,7 @@ namespace gf {
 	 */
     class LetterBoxResize final : public PreprocessOp {
     public:
+		explicit LetterBoxResize(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief used for detection box resizing, not applied currently.
 		 * @param data images.
@@ -82,7 +93,7 @@ namespace gf {
 
     private:
 		/// utility function to obtain scale.
-        static float GenerateScale(const cv::cuda::GpuMat &im);
+        float GenerateScale(const cv::cuda::GpuMat &im);
     };
 
 	/**
@@ -91,6 +102,7 @@ namespace gf {
 	 */
     class PadStride final : public PreprocessOp {
     public:
+		explicit PadStride(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief padding for data.
 		 * @param data images.
@@ -105,6 +117,7 @@ namespace gf {
 	 */
     class TopDownEvalAffine final : public PreprocessOp {
     public:
+		explicit TopDownEvalAffine(SharedRef<Config>& config): PreprocessOp(config){};
 		/**
 		 * @brief implementation function.
 		 * @param data images.

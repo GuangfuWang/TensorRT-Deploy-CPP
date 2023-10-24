@@ -7,10 +7,9 @@
 #include "config.h"
 #include "preprocess_ops.h"
 
-namespace gf
+namespace fight
 {
 
-extern const float NORM_CONST;///< normalization constant, should be 1.0/255.0.
 
 /**
  * @brief utility struct for image data in-out to GPU.
@@ -54,12 +53,12 @@ public:
 	/**
 	 * @brief initialization of static staff.
 	 */
-	static void Init();
+	void Init();
 	/**
 	 * @brief constructor.
 	 * @details init the m_ops/m_stream, and register all worker subclass.
 	 */
-	PreprocessorFactory();
+	explicit PreprocessorFactory(SharedRef<Config>& config);
 	/**
 	 * @brief destroy the factory map.
 	 */
@@ -82,15 +81,17 @@ private:
 
 public:
 	//these two matrix is used for normalizing the frame image channel wise.
-	static thread_local cv::cuda::GpuMat MUL_MATRIX;///< used for normalization.
-	static thread_local cv::cuda::GpuMat SUBTRACT_MATRIX;///< used for channel wise normalization.
+	cv::cuda::GpuMat MUL_MATRIX;///< used for normalization.
+	cv::cuda::GpuMat SUBTRACT_MATRIX;///< used for channel wise normalization.
 	///@note this CONFIG must be set before actually inferring.
-	static thread_local bool INIT_FLAG;///< indicate initialization status.
-	static thread_local float SCALE_W;///< indicate scale of width.
-	static thread_local float SCALE_H;///< indicate scale of height.
+	bool INIT_FLAG = false;///< indicate initialization status.
+	float SCALE_W = 1.0f;///< indicate scale of width.
+	float SCALE_H = 1.0f;///< indicate scale of height.
 private:
-	SharedRef<Factory<PreprocessOp>> m_ops = nullptr;///< worker smart pointer.
+//	SharedRef<Factory<PreprocessOp>> m_ops = nullptr;///< worker smart pointer.
+	std::unordered_map<std::string,PreprocessOp*> m_workers;
 	SharedRef<cv::cuda::Stream> m_stream = nullptr;///< parallel support.
+	SharedRef<Config> m_config = nullptr;
 };
 
 /**
@@ -101,6 +102,7 @@ private:
 class Preprocessor
 {
 public:
+	explicit Preprocessor(SharedRef<Config>& config):m_config(config){};
 	/**
 	 * @brief invoking interface function for preprocessing by deploy class.
 	 * @param input raw image data.
@@ -110,5 +112,6 @@ public:
 
 private:
 	SharedRef<PreprocessorFactory> m_preprocess_factory = nullptr;///< worker factory.
+	SharedRef<Config> m_config = nullptr;
 };
 }

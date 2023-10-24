@@ -3,8 +3,10 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "config.h"
+#include "util.h"
 
-namespace gf
+namespace fight
 {
 /**
  * @brief This is a class used for storing inference results.
@@ -25,6 +27,7 @@ namespace gf
 class TrtResults final
 {
 public:
+	explicit TrtResults(SharedRef<Config>& config):m_config(config){};
 	/**
 	 * @brief default de-constructor, to empty the map.
 	 */
@@ -46,25 +49,7 @@ public:
 	void Clear();
 private:
 	std::unordered_map<std::string, std::vector<float>> m_res;///< map for storing the current inference data.
+	SharedRef<Config> m_config = nullptr;
 };
 
-///**
-// * @brief this is an implementation of TrtResults class, used for PPTSM_FIGHT model.
-// * @note this class is marked as keyword final, meaning it can not be derived.
-// */
-//class FightPPTSMResults final: public TrtResults
-//{
-//public:
-//	/**
-//	 * @brief get fight detection results.
-//	 * @param idx_name index name string.
-//	 * @param res binary classification data, denoting the fight or no-fight.
-//	 */
-//	void Get(const std::string &idx_name, std::vector<float> &res) override;
-//	/**
-//	 * @brief set fight detection inference data.
-//	 * @param data detection data.
-//	 */
-//	void Set(const std::pair<std::string, std::vector<float>> &data) override;
-//};
 }

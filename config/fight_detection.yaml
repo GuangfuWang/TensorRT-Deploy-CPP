@@ -5,14 +5,14 @@ MODEL:
   OUTPUT_NAMES: [ "scores" ]
 
 DATA:
-  VIDEO_NAME: "/home/wgf/Downloads/tang.mp4"
+  VIDEO_NAME: "/home/wgf/Downloads/datasets/fight/fight-mine/09-41-27.mp4"
   RTSP_SITE: "" # url to RTSP site.
   INPUT_SHAPE: [1,8,3,320,320] # Batch/VideoLen/Channel/Height/Width
 
 PIPELINE:
   STRIDE: 2 # for padding.
   INTERP: 0
-  SAMPLE_INTERVAL: 3 # under which we will sample an image.
+  SAMPLE_INTERVAL: 1 # under which we will sample an image.
   TRIGGER_LEN: 8 # trigger a detection
   BATCH_SIZE: 1 # for now only 1 is supported. for video input [B,N,C,H,W] e.g. [1,8,3,320,320]
   THRESHOLD: 0.8
@@ -28,7 +28,7 @@ PIPELINE:
   TIMING: True
 
 POSTPROCESS:
-  POST_MODE: 0 # Current 4 types of mode are supported: DRAW_LETTER = 0, DRAW_BOX = 1, DRAW_BOX_LETTER = 2,MASK_OUT = 3
+  POST_MODE: 0 # Current 5 types of mode are supported: DRAW_LETTER = 0, DRAW_BOX = 1, DRAW_BOX_LETTER = 2,MASK_OUT = 3,NON = 4
   TEXT_COLOR: [255,0,0] # should be in BGR and value between [0-255]
   BOX_COLOR: [255,0,0] # should be in BGR and value between [0-255]
   TEXT_LINE_WIDTH: 2.0 # should be in float

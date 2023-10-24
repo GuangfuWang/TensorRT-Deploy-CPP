@@ -4,7 +4,7 @@
 #include <yaml-cpp/yaml.h>
 #include "cmdline.h"
 
-namespace gf
+namespace fight
 {
 /**
  * @brief config class for deployment. should not be derived.
@@ -12,6 +12,7 @@ namespace gf
 class Config final
 {
 public:
+	explicit Config(int argc, char **argv, const std::string &file = "../config/fight_detection.yaml");
 	/**
 	 * @brief loading the config yaml file, default folder is ./weight/fight/fight_detection.yaml
 	 * @param argc terminal arg number.
@@ -19,42 +20,43 @@ public:
 	 * @param file config file full path.
 	 * @note priority: 1 Terminal; 2 Config file; 3 Compilation settings
 	 */
-	static void LoadConfigFile(int argc, char **argv, const std::string &file);
+	void LoadConfigFile(int argc, char **argv, const std::string &file);
 public:
-	static thread_local std::string MODEL_NAME;///< name of trained model,should be tensorrt model.
-	static thread_local std::string BACKBONE;///< backbone of current model.
-	static thread_local std::string VIDEO_FILE;///< video file path.
-	static thread_local std::string RTSP_SITE;///< online RTSP URL.
-	static thread_local std::vector<int> INPUT_SHAPE;///< input data shape.
-	static thread_local std::string INPUT_NAME;///< input name inside the model.
-	static thread_local std::vector<std::string> OUTPUT_NAMES;///< output names inside the model, possibly multi-head.
-	static thread_local unsigned int STRIDE;///< stride for padding.
-	static thread_local unsigned int INTERP;///< interpolation for opencv resizing.
-	static thread_local unsigned int SAMPLE_INTERVAL;///< under which we will sample an image from video or streams.
-	static thread_local unsigned int TRIGGER_LEN;///< until which we will conduct an inference.
-	static thread_local unsigned int BATCH_SIZE;///< currently must be 1.
-	static thread_local float THRESHOLD;///< threshold for binary classification.
-	static thread_local unsigned int TARGET_CLASS;///< indicate which class to use.
-	static thread_local std::vector<int> TARGET_SIZE;///< target images size.
-	static thread_local std::vector<int> TRAIN_SIZE;///< input tensor size for model.
-	static thread_local unsigned int SHORT_SIZE;///< not unknown.
-	static thread_local std::vector<std::string> PIPELINE_TYPE;///< preprocessing pipeline names and orders.
-	static thread_local std::vector<float> N_MEAN;///< channel wise normalization mean.
-	static thread_local std::vector<float> N_STD;///< channel wise normalization standard deviation.
-	static thread_local bool ENABLE_SCALE;///< enable scale of images.
-	static thread_local bool KEEP_RATIO;///< keep the height/width ratio when scale.
-	static thread_local bool TIMING;///< enable timing of FPS.
+	std::string MODEL_NAME = "../models/ppTSM_fight.engine";
+	std::string BACKBONE = "ResNet50";
+	std::string VIDEO_FILE;
+	std::string RTSP_SITE = "/url/to/rtsp/site";
+	std::vector<int> INPUT_SHAPE = {1, 8, 3, 320, 320};
+	std::string INPUT_NAME = "image";
+	std::vector<std::string> OUTPUT_NAMES = {"scores"};
+	unsigned int STRIDE = 2;
+	unsigned int INTERP = 0;
+	unsigned int SAMPLE_INTERVAL = 3;
+	unsigned int TRIGGER_LEN = 8;
+	unsigned int BATCH_SIZE = 1;
+	float THRESHOLD = 0.8f;
+	unsigned int TARGET_CLASS = 1;
+	std::vector<int> TARGET_SIZE = {320, 320};
+	std::vector<int> TRAIN_SIZE = {320, 320};
+	unsigned int SHORT_SIZE = 340;
+	std::vector<std::string> PIPELINE_TYPE = {"TopDownEvalAffine","Resize",
+											  "LetterBoxResize","NormalizeImage"};
 
-	static thread_local int POST_MODE;///< post processing mode, Current 4 types of mode are supported: DRAW_LETTER = 0, DRAW_BOX = 1, DRAW_BOX_LETTER = 2,MASK_OUT = 3
-	static thread_local std::vector<unsigned char> TEXT_COLOR;///< text color for draw text into images, should be R,G,B
-	static thread_local std::vector<unsigned char> BOX_COLOR;///< box color for draw box, should be R,G,B. i.e.[255,0,0]
-	static thread_local float TEXT_LINE_WIDTH;///< text line width for drawing.
-	static thread_local float BOX_LINE_WIDTH;///< box line width for drawing.
-	static thread_local float TEXT_FONT_SIZE;///<text font size for drawing.
-	static thread_local int TEXT_OFF_X;///< text drawing position offset x.
-	static thread_local int TEXT_OFF_Y;///< text drawing position offset y.
-	static thread_local std::string POSTPROCESS_NAME;///< post processor name, should be same as used. (subclass of PostprocessorOps)
-	static thread_local std::string POST_TEXT;///< post processing text.
-	static bool init;
+	std::vector<float> N_MEAN = {0.485f, 0.456f, 0.406f};
+	std::vector<float> N_STD = {0.229f, 0.224f, 0.225f};
+	bool ENABLE_SCALE = true;
+	bool KEEP_RATIO = true;
+	bool TIMING = true;
+	int POST_MODE = 0;
+	std::vector<unsigned char> TEXT_COLOR = {255, 0, 0};
+	std::vector<unsigned char> BOX_COLOR = {255, 0, 0};
+	float TEXT_LINE_WIDTH = 2.0f;
+	float BOX_LINE_WIDTH = 2.0;
+	float TEXT_FONT_SIZE = 1.8f;
+	int   TEXT_OFF_X = 450;
+	int   TEXT_OFF_Y = 50;
+	std::string POSTPROCESS_NAME = "FightPpTSMDeployPost";
+	std::string POST_TEXT = "Fight";
+	bool init = false;
 };
 }

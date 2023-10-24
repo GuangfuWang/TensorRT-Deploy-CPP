@@ -4,8 +4,9 @@
 #include <chrono>
 #include <unordered_map>
 #include <vector>
+#include <opencv2/opencv.hpp>
 
-namespace gf
+namespace fight
 {
 /**
  * @brief this is used for lazy purpose.
@@ -75,6 +76,9 @@ public:
 	 * @param in
 	 */
 	static void softmax(std::vector<float>& in);
+
+	static std::vector<std::string> parseNames(const std::string &names, char delim);
+
 
 private:
 	///note this is thread local variable, enabling the util function can be used in multi-thread environments.

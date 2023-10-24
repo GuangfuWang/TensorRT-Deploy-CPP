@@ -1,9 +1,9 @@
 #pragma once
 #include <opencv2/core/core.hpp>
 
-#define POLY_POINT_MAX_NUMBER 16
+namespace fight {
 
-namespace gf {
+const int Size_ =  100;
 
 typedef enum
 {
@@ -35,8 +35,8 @@ typedef struct
 
 typedef struct
 {
-    cv_Point p[POLY_POINT_MAX_NUMBER]; //用于画出ROI的点，请顺时针给出，目前支持四边形
-    int pointNum;	// 多边形点的个数
+    cv_Point p[Size_]; //用于画出ROI的点，请顺时针给出，目前支持四边形
+	std::vector<int> pointNum;		// 多边形点的个数
     int regionNum;  // 多边形个数
 
     float lowtime;
@@ -45,7 +45,6 @@ typedef struct
     cv_Point c0[2];
     cv_Point c1[2];
     cv_Point c2[2];
-
 
     int alarm;		   // 0代表正常，1 代表异常
     int Frameinterval; //隔帧数量
@@ -73,4 +72,4 @@ extern void UpdateParams_Algorithm(cvModel *pModel);
 extern void Process_Algorithm(cvModel *pModel, cv::Mat &input_frame);
 extern void Destroy_Algorithm(cvModel *pModel);
 
-} // namespace gf
+} // namespace fight

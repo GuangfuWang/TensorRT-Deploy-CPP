@@ -5,7 +5,7 @@
 #include "trt_deployresult.h"
 #include "util.h"
 
-namespace gf
+namespace fight
 {
 /**
  * @brief This is a base class for real post processing.
@@ -16,6 +16,9 @@ namespace gf
 class PostprocessorOps
 {
 public:
+	explicit PostprocessorOps(SharedRef<Config>& config){
+		m_config = config;
+	}
 	/**
 	 * @brief virtual de-constructor for avoiding memory leaking.
 	 */
@@ -27,6 +30,7 @@ public:
 		DRAW_BOX = 1, ///< indicate only draw box into image as inference results.
 		DRAW_BOX_LETTER = 2, ///< indicate draw both text and box as inference results.
 		MASK_OUT = 3, ///< indicate mask out the box area.
+		NON = 4,
 	};
 
 public:
@@ -38,7 +42,10 @@ public:
 	 */
 	virtual void Run(const SharedRef<TrtResults> &res,
 					 const std::vector<cv::Mat> &img,
-					 std::vector<cv::Mat> &out_img) = 0;
+					 std::vector<cv::Mat> &out_img,int& alarm) = 0;
+
+protected:
+	SharedRef<Config> m_config = nullptr;
 };
 
 /**
@@ -49,8 +56,9 @@ public:
 class FightPpTSMDeployPost final: public PostprocessorOps
 {
 public:
+	explicit FightPpTSMDeployPost(SharedRef<Config>& config): PostprocessorOps(config){};
 	void Run(const SharedRef<TrtResults> &res, const std::vector<cv::Mat> &img,
-			 std::vector<cv::Mat> &out_img) override;
+			 std::vector<cv::Mat> &out_img,int & alarm) override;
 private:
     std::vector<float> m_moving_average;///< moving average.
 };
@@ -62,6 +70,7 @@ private:
 class Postprocessor final
 {
 public:
+	explicit Postprocessor(SharedRef<Config>& config){m_config = config;}
 	/**
  	* @brief de-constructor.
  	*/
@@ -75,15 +84,11 @@ public:
 	 */
 	void Run(const SharedRef<TrtResults> &res,
 					 const std::vector<cv::Mat> &img,
-					 std::vector<cv::Mat> &out_img);
-	/**
-	 * @brief initialization of this class, mainly to register the used worker class.
-	 */
-	void Init();
-
+					 std::vector<cv::Mat> &out_img,int& alarm);
 private:
-	SharedRef<Factory<PostprocessorOps>> m_ops = nullptr;///< auto deconstructed, lazy purpose.
+//	SharedRef<Factory<PostprocessorOps>> m_ops = nullptr;///< auto deconstructed, lazy purpose.
 	PostprocessorOps* m_worker = nullptr;///< real worker.
-	static thread_local bool INIT_FLAG; ///< initialization flag.
+	bool INIT_FLAG = false; ///< initialization flag.
+	SharedRef<Config> m_config = nullptr;
 };
 }

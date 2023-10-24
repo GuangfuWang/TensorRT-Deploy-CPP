@@ -8,7 +8,7 @@
 #include "trt_deployresult.h"
 #include "util.h"
 
-namespace gf
+namespace fight
 {
 /**
  * @brief this is a helper class for logging.
@@ -38,7 +38,7 @@ public:
 	 * @brief constructor for deploy class.
 	 * @details this construction will not init all materials.
 	 */
-	TrtDeploy();
+	explicit TrtDeploy(SharedRef<Config>& config);
 
 	/**
 	 * @brief virtual de-constructor to avoid memory leaking.
@@ -84,7 +84,7 @@ public:
 	 * @param out_img output images.
 	 */
 	void Postprocessing(const SharedRef<TrtResults> &res, const std::vector<cv::Mat> &img,
-						std::vector<cv::Mat> &out_img);
+						std::vector<cv::Mat> &out_img, int& alarm);
 
 protected:
 	/**
@@ -116,7 +116,7 @@ protected:
 	CudaMemAllocStatus MemAllocStatus();
 
 protected:
-	static thread_local bool INIT_FLAG; ///< to indicate the system has initialized.
+	bool INIT_FLAG = false; ///< to indicate the system has initialized.
 	SharedRef<Preprocessor> m_preprocessor = nullptr; ///< preprocessor object.
 	SharedRef<Postprocessor> m_postprocessor = nullptr; ///< post processor object.
 	nvinfer1::ICudaEngine* m_engine = nullptr; ///< cuda engine object.
@@ -133,6 +133,8 @@ protected:
 	CudaMemAllocStatus m_cuda_alloc_status; ///< allocation of memory for cuda.
 
 	float m_curr_fps; ///< Frame per Second.
+
+	SharedRef<Config> m_config = nullptr;
 };
 
 }

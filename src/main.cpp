@@ -1,8 +1,9 @@
 #include "config.h"
 #include "trt_deploy.h"
 #include "trt_deployresult.h"
+#include "model.h"
 
-using namespace gf;
+using namespace fight;
 
 /**
  * @example
@@ -12,56 +13,39 @@ using namespace gf;
  */
 
 int main(int argc, char **argv) {
-    Config::LoadConfigFile(argc, argv, "../config/fight_detection.yaml");
-    SharedRef<TrtDeploy> mDeploy = createSharedRef<TrtDeploy>();
-    SharedRef<TrtResults> mResult = createSharedRef<TrtResults>();
-    mDeploy->Warmup(mResult);
     //prepare the input data.
-    auto in_path = std::filesystem::path(Config::VIDEO_FILE);
+    auto in_path = std::filesystem::path("/home/wgf/Downloads/datasets/fight/tang.mp4");
     cv::VideoCapture cap(in_path);
     cv::VideoWriter vw;
     std::filesystem::path output_path = in_path.parent_path() / (in_path.stem().string() + ".result.mp4");
     vw.open(output_path,
             cv::VideoWriter::fourcc('m', 'p', '4', 'v'),
             cap.get(cv::CAP_PROP_FPS),
-            cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH), cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
-    size_t total = cap.get(cv::CAP_PROP_FRAME_COUNT), current = 0;
-    std::vector<std::vector<cv::Mat>> imgs;
-    cv::Mat img;
-    int c = 0;
-    std::vector<std::vector<cv::Mat>> unsampled;
-    std::vector<cv::Mat> cur;
-    std::vector<cv::Mat> whole;
-    int num = total / (Config::TRIGGER_LEN * Config::SAMPLE_INTERVAL);
-    while (cap.read(img)) {
-        if (c / (Config::TRIGGER_LEN * Config::SAMPLE_INTERVAL) == num)break;
-        if (c % Config::SAMPLE_INTERVAL == 0) {
-            cur.emplace_back(img.clone());
-        }
-        whole.emplace_back(img.clone());
-        c++;
-        if (cur.size() == Config::TRIGGER_LEN) {
-            imgs.emplace_back(cur);
-            unsampled.emplace_back(whole);
-            cur.clear();
-            whole.clear();
-        }
-    }
-    c = 0;
+            cv::Size(cap.get(cv::CAP_PROP_FRAME_WIDTH),
+					 cap.get(cv::CAP_PROP_FRAME_HEIGHT)));
 
-    for (auto &each: imgs) {
-        mDeploy->Infer(each, mResult);
-        mDeploy->Postprocessing(mResult, each, unsampled[c]);
-        c++;
+	bool init = false;
+	cv::Mat img;
+	cvModel* ptr = nullptr;
+	cv::Mat curr;
+    while (cap.isOpened()) {
+		cap.read(img);
+		if(img.empty())break;
+		if(!init){
+			ptr = Allocate_Algorithm(img,0,0);
+			SetPara_Algorithm(ptr,0);
+			UpdateParams_Algorithm(ptr);
+			init = true;
+		}
+		curr = img.clone();
+		Process_Algorithm(ptr,curr);
+		std::cout<<"Current Res: "<<ptr->alarm<<std::endl;
+		vw.write(curr.clone());
     }
-    for (auto &f: unsampled) {
-        for (auto & single:f) {
-            vw.write(single);
-        }
-    }
-	vw.release();
 	cap.release();
-    unsampled.clear();
+	vw.release();
+
+	Destroy_Algorithm(ptr);
 
     return 0;
 }

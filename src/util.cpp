@@ -3,7 +3,7 @@
 #include <iostream>
 #include <valarray>
 
-namespace gf
+namespace fight
 {
 
 thread_local std::chrono::high_resolution_clock::time_point Util::mTic;
@@ -44,6 +44,19 @@ long Util::getFileSize(const std::string &file)
 	return statBuf.st_size;
 }
 
+std::vector<std::string> Util::parseNames(const std::string &names, char delim)
+{
+	std::stringstream ss(names);
+	std::string item;
+	std::vector<std::string> elems;
+	while (std::getline(ss, item, delim)) {
+		if (!item.empty()) {
+			elems.push_back(item);
+		}
+	}
+	return elems;
+}
+
 int Util::cvtStr2Int(const char *arr)
 {
 	return std::atoi(arr);
@@ -60,4 +73,7 @@ void Util::softmax(std::vector<float> &in)
 		e /= total;
 	}
 }
+
+
+
 }
